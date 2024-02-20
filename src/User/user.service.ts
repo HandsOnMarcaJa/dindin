@@ -1,14 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/api/prisma.service';
-import { CreateUserDTO } from './DTO/create-user.dto';
+import { CreateUserBodyDTO } from './DTO/create-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  async create(data: CreateUserDTO) {
+  async create(data: CreateUserBodyDTO) {
     return this.prisma.user.create({
-      data,
+      data: {
+        email: data.email,
+        name: data.name,
+        password: data.password,
+      },
     });
   }
 
