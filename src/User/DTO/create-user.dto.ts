@@ -1,24 +1,13 @@
-import {
-  IsEmail,
-  IsOptional,
-  IsString,
-  IsStrongPassword,
-} from 'class-validator';
+import { ZodValidationPipe } from 'src/shared/pipes/ZodValidationPipe';
+import { z } from 'zod';
 
-export class CreateUserDTO {
-  @IsString()
-  name: string;
+const createUserBodySchema = z.object({
+  name: z.string().trim().min(2).max(255),
+  email: z.string().email(),
+  password: z.string().trim().min(8).max(255),
+});
 
-  @IsOptional()
-  @IsEmail()
-  email: string;
-
-  @IsStrongPassword({
-    minLength: 6,
-    minNumbers: 0,
-    minUppercase: 0,
-    minLowercase: 0,
-    minSymbols: 0,
-  })
-  password: string;
-}
+export type CreateUserBodyDTO = z.infer<typeof createUserBodySchema>;
+export const createUserBodyPipeValidator = new ZodValidationPipe(
+  createUserBodySchema,
+);
