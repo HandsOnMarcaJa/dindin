@@ -1,8 +1,6 @@
 import { ZodValidationPipe } from 'src/shared/pipes/ZodValidationPipe';
 import { z } from 'zod';
-import {
-  createUserBodySchema,
-} from './create-user.dto';
+import { createUserBodySchema } from './create-user.dto';
 
 export const updateUserBody = createUserBodySchema.partial();
 

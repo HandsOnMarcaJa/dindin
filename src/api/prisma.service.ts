@@ -3,7 +3,8 @@ import { PrismaClient } from '@prisma/client';
 
 export class PrismaService
   extends PrismaClient
-  implements OnModuleDestroy, OnModuleInit {
+  implements OnModuleDestroy, OnModuleInit
+{
   constructor() {
     super({
       log: ['error', 'warn'],
