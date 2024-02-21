@@ -6,7 +6,7 @@ import {
 import {UpdateUserBodyDTO, updateUserBodyPipeValidator} from './DTO/update-user.dto';
 import { UserService } from './user.service';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
