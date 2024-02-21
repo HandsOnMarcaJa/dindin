@@ -2,12 +2,10 @@ import {
   Body,
   Controller,
   Delete,
-  Request,
   Param,
   Post,
   Patch,
   Get,
-  UseGuards,
 } from '@nestjs/common';
 import {
   CreateUserBodyDTO,
@@ -18,38 +16,51 @@ import {
   updateUserBodyPipeValidator,
 } from './DTO/update-user.dto';
 import { UserService } from './user.service';
-import { AuthGuard } from '@nestjs/passport';
+import { Public } from 'src/auth/public.decorator';
+import {
+  LoginUserBodyDTO,
+  loginUserBodyValidation,
+} from './DTO/login-user-dto';
+import { CurrentLoggedUserDecorator } from 'src/auth/currentLoggeduser.decorator';
+import { TokenPayloadSchema } from 'src/auth/jwtStrateg.strategy';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
+  @Public()
   async create(@Body(createUserBodyPipeValidator) data: CreateUserBodyDTO) {
     return this.userService.create(data);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  @Get()
+  async findOne(@CurrentLoggedUserDecorator() user: TokenPayloadSchema) {
+    const { sub } = user;
+
+    return this.userService.findOne(sub);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
+  @Patch()
+  async update(
     @Body(updateUserBodyPipeValidator) data: UpdateUserBodyDTO,
+    @CurrentLoggedUserDecorator() user: TokenPayloadSchema,
   ) {
-    return this.userService.update(id, data);
+    const { sub } = user;
+
+    return this.userService.update(sub, data);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.userService.delete(id);
+  @Delete()
+  async delete(@CurrentLoggedUserDecorator() user: TokenPayloadSchema) {
+    const { sub } = user;
+
+    return this.userService.delete(sub);
   }
 
-  // @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Request() req) {
-    return req.user;
+  @Public()
+  async login(@Body(loginUserBodyValidation) body: LoginUserBodyDTO) {
+    return this.userService.login(body);
   }
 }
