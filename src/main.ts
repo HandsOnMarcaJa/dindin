@@ -2,9 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const acceptOrgin = process.env.ORIGIN || 'http://localhost:3000';
+
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: '*',
+      origin: [acceptOrgin],
       credentials: true,
     },
   });
@@ -16,4 +18,3 @@ async function bootstrap() {
   });
 }
 bootstrap();
-

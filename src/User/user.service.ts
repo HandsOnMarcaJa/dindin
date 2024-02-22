@@ -18,6 +18,14 @@ export class UserService {
   ) { }
 
   async create(data: CreateUserBodyDTO) {
+    const userExists = await this.prisma.user.findFirst({
+      where: { email: data.email },
+    });
+
+    if (userExists) {
+      throw new ForbiddenException('User already exists');
+    }
+
     const hash = await bcrypt.hash(data.password, 8);
 
     const { password: _, ...user } = await this.prisma.user.create({
